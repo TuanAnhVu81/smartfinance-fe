@@ -1,16 +1,8 @@
-import { Outlet, Navigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
-import { ROUTES } from '../../constants/routes';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 const MainLayout = () => {
-  const { isAuthenticated } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to={ROUTES.LOGIN} replace />;
-  }
-
   return (
     <div className="flex h-screen bg-surface overflow-hidden">
       {/* Sidebar */}
