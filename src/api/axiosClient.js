@@ -65,8 +65,10 @@ axiosClient.interceptors.response.use(
       }
 
       try {
-        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {
-          refreshToken: refreshToken,
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {}, {
+          headers: {
+            'X-Refresh-Token': refreshToken,
+          }
         });
 
         const { accessToken } = response.data.data; // Assuming Backend structure: { success, code, data: { accessToken } }

@@ -10,18 +10,18 @@ const AuthLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-text-primary">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-8">
+        <h1 className="text-4xl font-extrabold text-blue-600 tracking-tight">
           Smart Finance
-        </h2>
-        <p className="mt-2 text-center text-sm text-text-secondary">
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">
           AI-Powered Personal Finance & Budget Management
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-surface-card py-8 px-4 shadow-card rounded-card sm:px-10">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-2xl sm:px-10 border border-gray-100">
           <Outlet />
         </div>
       </div>
