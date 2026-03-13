@@ -128,13 +128,13 @@ const TransactionForm = ({ initialData, onSubmit, onCancel, isSubmitting }) => {
           
           <optgroup label="Expense (Chi tiêu)">
             {expenseCategories.map(cat => (
-              <option key={cat.id} value={cat.id}>🔴 {cat.name}</option>
+              <option key={cat.id} value={cat.id}>{cat.icon || '🔴'} {cat.name}</option>
             ))}
           </optgroup>
           
           <optgroup label="Income (Thu nhập)">
             {incomeCategories.map(cat => (
-              <option key={cat.id} value={cat.id}>🟢 {cat.name}</option>
+              <option key={cat.id} value={cat.id}>{cat.icon || '🟢'} {cat.name}</option>
             ))}
           </optgroup>
         </select>
