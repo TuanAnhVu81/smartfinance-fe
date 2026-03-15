@@ -43,7 +43,14 @@ function App() {
             <Route path={ROUTES.AI_INSIGHT} element={<AiInsightPage />} />
             <Route path={ROUTES.CATEGORIES} element={<CategoriesPage />} />
             <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
-            <Route path={ROUTES.ADMIN} element={<AdminPage />} />
+            <Route 
+              path={ROUTES.ADMIN} 
+              element={
+                <ProtectedRoute role="ROLE_ADMIN">
+                  <AdminPage />
+                </ProtectedRoute>
+              } 
+            />
           </Route>
         </Route>
 

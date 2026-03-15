@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children, role }) => {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
-  if (role && user?.role !== role) {
+  if (role && !user?.roles?.includes(role)) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
