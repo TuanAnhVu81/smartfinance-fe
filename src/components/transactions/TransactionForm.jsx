@@ -10,7 +10,9 @@ const transactionSchema = z.object({
     .positive("Amount must be greater than 0"),
   categoryId: z.number({ invalid_type_error: "Please select a category" })
     .min(1, "Please select a category"),
-  transactionDate: z.string().min(1, "Date is required"),
+  transactionDate: z.string().min(1, "Date is required").refine((date) => {
+    return new Date(date) <= new Date();
+  }, { message: "Date cannot be in the future" }),
   note: z.string().max(255, "Note must not exceed 255 characters").optional().nullable(),
 });
 
@@ -46,6 +48,7 @@ const TransactionForm = ({ initialData, onSubmit, onCancel, isSubmitting }) => {
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(transactionSchema),
@@ -82,11 +85,17 @@ const TransactionForm = ({ initialData, onSubmit, onCancel, isSubmitting }) => {
       ...data,
       amount: parseFloat(data.amount),
       categoryId: parseInt(data.categoryId, 10),
-    });
+    }, setError); // Pass setError to parent so it can map API errors
   };
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
+      {errors.root && (
+        <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm mb-4 border border-red-100">
+          {errors.root.message}
+        </div>
+      )}
+      
       {/* Amount Field */}
       <div>
         <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">

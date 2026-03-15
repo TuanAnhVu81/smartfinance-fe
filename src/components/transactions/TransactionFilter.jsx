@@ -68,11 +68,22 @@ const TransactionFilter = ({ filters, setFilters, onFilterChange }) => {
             className="w-full border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none bg-white text-gray-700"
           >
             <option value="all">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.type === 'INCOME' ? '🟢' : '🔴'} {category.name}
-              </option>
-            ))}
+            
+            <optgroup label="Expenses">
+              {categories.filter(c => c.type === 'EXPENSE').map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.icon || '🔴'} {category.name}
+                </option>
+              ))}
+            </optgroup>
+
+            <optgroup label="Incomes">
+              {categories.filter(c => c.type === 'INCOME').map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.icon || '🟢'} {category.name}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </div>
 

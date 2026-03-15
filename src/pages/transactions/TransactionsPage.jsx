@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { 
   useTransactions, 
   useCreateTransaction, 
@@ -18,15 +19,38 @@ import Pagination from '../../components/common/Pagination';
  */
 const TransactionsPage = () => {
   const currentDate = new Date();
-  
-  // Filtering and Pagination State
-  const [filters, setFilters] = useState({
-    page: 0,
-    size: 10,
-    month: currentDate.getMonth() + 1,
-    year: currentDate.getFullYear(),
-    categoryId: null,
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Extract filters from URL search params with fallback defaults
+  const filters = useMemo(() => ({
+    page: parseInt(searchParams.get('page') || '0', 10),
+    size: parseInt(searchParams.get('size') || '10', 10),
+    month: parseInt(searchParams.get('month') || (currentDate.getMonth() + 1).toString(), 10),
+    year: parseInt(searchParams.get('year') || currentDate.getFullYear().toString(), 10),
+    categoryId: searchParams.get('categoryId') ? parseInt(searchParams.get('categoryId'), 10) : null,
+  }), [searchParams]);
+
+  // Helper to update URL params
+  const setFilters = useCallback((newFiltersOrUpdater) => {
+    setSearchParams((prevParams) => {
+      // Determine if newFilters is a function or object
+      const newFilters = typeof newFiltersOrUpdater === 'function' 
+        ? newFiltersOrUpdater(Object.fromEntries(prevParams.entries()))
+        : newFiltersOrUpdater;
+
+      const params = new URLSearchParams(prevParams);
+      
+      // Merge new filters into params
+      Object.entries(newFilters).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === '') {
+          params.delete(key);
+        } else {
+          params.set(key, value.toString());
+        }
+      });
+      return params;
+    });
+  }, [setSearchParams]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,11 +69,11 @@ const TransactionsPage = () => {
   // Handlers
   const handleFilterChange = useCallback(() => {
     // Whenever a filter (month/year/category) changes, ALWAYS reset page back to 0
-    setFilters(prev => ({ ...prev, page: 0 }));
-  }, []);
+    setFilters({ page: 0 });
+  }, [setFilters]);
 
   const handlePageChange = (newPage) => {
-    setFilters(prev => ({ ...prev, page: newPage }));
+    setFilters({ page: newPage });
   };
 
   const handleOpenModalForCreate = () => {
@@ -67,16 +91,30 @@ const TransactionsPage = () => {
     setSelectedTransaction(null);
   };
 
-  const handleFormSubmit = (data) => {
+  const handleFormSubmit = (data, setError) => {
     if (selectedTransaction) {
       // Edit mode
       updateMutation.mutate(
         { id: selectedTransaction.id, data },
-        { onSuccess: handleCloseModal }
+        { 
+          onSuccess: handleCloseModal,
+          onError: (error) => {
+            if (error?.response?.status === 400 || error?.response?.status === 409) {
+              setError('root', { message: error.response.data.message || 'Validation error' });
+            }
+          }
+        }
       );
     } else {
       // Create mode
-      createMutation.mutate(data, { onSuccess: handleCloseModal });
+      createMutation.mutate(data, { 
+        onSuccess: handleCloseModal,
+        onError: (error) => {
+          if (error?.response?.status === 400 || error?.response?.status === 409) {
+            setError('root', { message: error.response.data.message || 'Validation error' });
+          }
+        }
+      });
     }
   };
 
@@ -89,7 +127,7 @@ const TransactionsPage = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-in fade-in duration-300">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -113,14 +151,16 @@ const TransactionsPage = () => {
       </div>
 
       {/* Filters Section */}
-      <TransactionFilter 
-        filters={filters} 
-        setFilters={setFilters} 
-        onFilterChange={handleFilterChange} 
-      />
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <TransactionFilter 
+          filters={filters} 
+          setFilters={setFilters} 
+          onFilterChange={handleFilterChange} 
+        />
+      </div>
 
       {/* Transactions List */}
-      <div className="mt-6">
+      <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <TransactionList 
           transactions={transactions} 
           isLoading={isLoading} 
