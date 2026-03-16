@@ -11,8 +11,6 @@ export const useTransactions = (filters) => {
   return useQuery({
     queryKey: QUERY_KEYS.TRANSACTIONS.LIST(filters),
     queryFn: () => transactionApi.getTransactions(filters),
-    // Keep previous data while fetching new pages to avoid UI flickering
-    placeholderData: (previousData) => previousData,
   });
 };
 

@@ -1,8 +1,17 @@
 import { useAuthStore } from '../../store/authStore';
 import { Menu } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Header = ({ onMenuClick }) => {
   const { user, logout } = useAuthStore();
+  const queryClient = useQueryClient();
+
+  const handleLogout = () => {
+    // 1. Clear all React Query cache to prevent data leakage between users
+    queryClient.clear();
+    // 2. Clear auth store (tokens, user info)
+    logout();
+  };
 
   return (
     <header className="bg-white shadow-sm z-10 border-b border-gray-200">
@@ -30,7 +39,7 @@ const Header = ({ onMenuClick }) => {
           </div>
           
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="inline-flex items-center px-4 py-2 border border-gray-200 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
           >
             Logout
