@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { Link } from 'react-router-dom';
 import { useLoginMutation } from '../../hooks/useAuth';
 import { ROUTES } from '../../constants/routes';
+import { Info, UserShield, User as UserIcon } from 'lucide-react';
 
 // Define validation schema using Zod
 const schema = z.object({
@@ -16,12 +17,18 @@ const LoginPage = () => {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
   });
 
   const { mutate, isPending } = useLoginMutation();
+
+  const handleQuickLogin = (username, password) => {
+    setValue('username', username);
+    setValue('password', password);
+  };
 
   const onSubmit = (data) => {
     mutate(data, {
@@ -106,6 +113,43 @@ const LoginPage = () => {
           <Link to={ROUTES.REGISTER} className="font-semibold text-blue-600 hover:text-blue-700 hover:underline">
             Register now
           </Link>
+        </div>
+
+        {/* Demo Credentials Box */}
+        <div className="mt-8 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100/50">
+          <div className="flex items-center gap-2 mb-3 text-indigo-700">
+            <Info size={16} className="text-indigo-500" />
+            <span className="text-xs font-bold uppercase tracking-wider">Demo Credentials</span>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('admin', '123456A')}
+              className="flex flex-col items-start p-2.5 bg-white hover:bg-indigo-100/50 border border-indigo-100 rounded-lg transition-all group text-left"
+            >
+              <div className="flex items-center gap-1.5 text-xs font-bold text-gray-800 mb-0.5">
+                <UserShield size={12} className="text-indigo-500" />
+                <span>Admin Account</span>
+              </div>
+              <span className="text-[10px] text-gray-500 font-mono">admin / 123456A</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('anhvt', '12345678')}
+              className="flex flex-col items-start p-2.5 bg-white hover:bg-indigo-100/50 border border-indigo-100 rounded-lg transition-all group text-left"
+            >
+              <div className="flex items-center gap-1.5 text-xs font-bold text-gray-800 mb-0.5">
+                <UserIcon size={12} className="text-indigo-500" />
+                <span>User Account</span>
+              </div>
+              <span className="text-[10px] text-gray-500 font-mono">anhvt / 12345678</span>
+            </button>
+          </div>
+          <p className="mt-2.5 text-[10px] text-indigo-400 text-center italic">
+            Click an account to auto-fill
+          </p>
         </div>
       </form>
     </>
