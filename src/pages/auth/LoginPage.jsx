@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Link } from 'react-router-dom';
 import { useLoginMutation } from '../../hooks/useAuth';
 import { ROUTES } from '../../constants/routes';
-import { Info, UserShield, User as UserIcon } from 'lucide-react';
+import { Info, Shield, User as UserIcon } from 'lucide-react';
 
 // Define validation schema using Zod
 const schema = z.object({
@@ -129,7 +129,7 @@ const LoginPage = () => {
               className="flex flex-col items-start p-2.5 bg-white hover:bg-indigo-100/50 border border-indigo-100 rounded-lg transition-all group text-left"
             >
               <div className="flex items-center gap-1.5 text-xs font-bold text-gray-800 mb-0.5">
-                <UserShield size={12} className="text-indigo-500" />
+                <Shield size={12} className="text-indigo-500" />
                 <span>Admin Account</span>
               </div>
               <span className="text-[10px] text-gray-500 font-mono">admin / 123456A</span>
