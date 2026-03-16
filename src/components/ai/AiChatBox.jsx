@@ -36,7 +36,11 @@ const AiChatBox = ({ onSendMessage, isLoading }) => {
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Only auto-scroll if user has started a conversation (more than welcome message)
+    // or if the AI is currently loading a response.
+    if (messages.length > 1 || isLoading) {
+      scrollToBottom();
+    }
   }, [messages, isLoading]);
 
   const handleSend = (e, textOverride = null) => {
